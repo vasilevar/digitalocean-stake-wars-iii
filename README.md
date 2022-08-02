@@ -41,13 +41,169 @@ sudo apt update && sudo apt upgrade -y
 
 Устанавливаем Node.js и npm
 
-<&curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -  
+curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -  
 sudo apt install build-essential nodejs
-PATH="$PATH"&>
+PATH="$PATH"
 
-Версия Node js должна быть 18.x.x, а версия npm 8.x.x
+Версия Node.js должна быть 18.x.x, а версия npm 8.x.x
 
+node - v
 
+npm -v
+
+Устанавливаем NEAR-CLI
+
+sudo npm install -g near-cli
+
+Устанавливаем shardnet, как сеть где будет работать NEAR-CLI
+
+export NEAR_ENV=shardnet
+
+Устанавливаем нужные пакеты
+
+sudo apt install -y git binutils-dev libcurl4-openssl-dev zlib1g-dev libdw-dev libiberty-dev cmake gcc g++ python3 docker.io protobuf-compiler libssl-dev pkg-config clang llvm cargo
+
+Устанавливаем pip
+
+sudo apt install python3-pip
+
+Если есть проблемы с установкой docker то пропишите:
+
+apt-get install containerd=1.3.3-0ubuntu2
+
+Устанавливаем конфигурацию
+
+USER_BASE_BIN=$(python3 -m site --user-base)/bin
+
+export PATH="$USER_BASE_BIN:$PATH"
+
+Устанавливаем Building env
+
+sudo apt install clang build-essential make
+
+Устанавливаем Rust и Cargo
+
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+В меню выбираем цифру 1
+
+Прописываем
+
+source $HOME/.cargo/env
+
+Скачиваем nearcore
+
+git clone https://github.com/near/nearcore
+
+cd nearcore
+
+git fetch
+
+Проверяем commit. Commit - https://github.com/near/stakewars-iii/blob/main/commit.md
+
+git checkout <commit>
+
+Компилируем nearcore
+  
+cargo build -p neard --release --features shardnet
+  
+Папка - target/release/neard
+
+Инициализируем рабочую папку
+./target/release/neard --home ~/.near init --chain-id shardnet --download-genesis
+
+Прописываем
+
+rm ~/.near/config.json
+  
+wget -O ~/.near/config.json https://s3-us-west-1.amazonaws.com/build.nearprotocol.com/nearcore-deploy/shardnet/config.json
+ 
+Запускаем ноду
+
+cd ~/nearcore
+  
+./target/release/neard --home ~/.near run
+
+Логинимся
+ 
+near login
+  
+Копируем ссылку в браузер и там логинимся в свой аккаунт, после этого вписываем свой адресс в командую строку
+
+Проверяем validator_key.json
+
+cat ~/.near/validator_key.json
+  
+Если validator_key.json отсутсвует, то создаем его
+
+near generate-key <pool_id>
+
+pool_id - имя вашего пула, <pool_id>.factory.shardnet.near
+
+Копируем ключ в nearcore
+  
+cp ~/.near-credentials/shardnet/YOUR_WALLET.json ~/.near/validator_key.json
+  
+Заменяем account_id на <pool_id>.factory.shardnet.near
+  
+А private_key на secret_key
+
+Запускаем валидатора
+
+target/release/neard run
+  
+Настраиваем systemd
+
+sudo vi /etc/systemd/system/neard.service
+
+[Unit]
+  
+Description=NEARd Daemon Service
+
+[Service]
+  
+Type=simple
+  
+User=<USER>
+  
+#Group=near
+  
+WorkingDirectory=/home/<USER>/.near
+  
+ExecStart=/home/<USER>/nearcore/target/release/neard run
+  
+Restart=on-failure
+  
+RestartSec=30
+  
+KillSignal=SIGINT
+  
+TimeoutStopSec=45
+  
+KillMode=mixed
+
+[Install]
+  
+WantedBy=multi-user.target
+
+Потом прописываем:
+  
+sudo systemctl enable neard
+  
+sudo systemctl start neard
+  
+Посмотреть журнал:
+  
+journalctl -n 100 -f -u neard
+  
+Устанавливаем красивый шрифт:
+  
+sudo apt install ccze
+  
+Просмотр журнала с цветом:
+  
+journalctl -n 100 -f -u neard | ccze -A
+  
 
 
 Задания
