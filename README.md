@@ -204,7 +204,57 @@ sudo apt install ccze
   
 journalctl -n 100 -f -u neard | ccze -A
   
+Разворачиваем контракт стейкинг пула:
+  
+near call factory.shardnet.near create_staking_pool '{"staking_pool_id": "<pool id>", "owner_id": "<accountId>", "stake_public_key": "<public key>", "reward_fee_fraction": {"numerator": 5, "denominator": 100}, "code_hash":"DD428g9eqLL8fWUxv8QSpVFzyHi1Qd16P8ephYCTmMSZ"}' --accountId="<accountId>" --amount=30 --gas=300000000000000
 
+Обновить настройки стейкинг пула:
+  
+near call <pool_name> update_reward_fee_fraction '{"reward_fee_fraction": {"numerator": 1, "denominator": 100}}' --accountId <account_id> --gas=300000000000000
+
+Застейкать:
+  
+near call <staking_pool_id> deposit_and_stake --amount <amount> --accountId <accountId> --gas=300000000000000
+
+Разстейкать:
+
+near call <staking_pool_id> unstake '{"amount": "<amount yoctoNEAR>"}' --accountId <accountId> --gas=300000000000000
+
+Разстейкать все:
+
+near call <staking_pool_id> unstake_all --accountId <accountId> --gas=300000000000000
+
+Анстейк занимает 2-3 эпохи (24-36ч)
+  
+Пинг:
+  
+near call <staking_pool_id> ping '{}' --accountId <accountId> --gas=300000000000000
+  
+Пауза/возобновление стейкинга:
+  
+near call <staking_pool_id> pause_staking '{}' --accountId <accountId>
+  
+near call <staking_pool_id> resume_staking '{}' --accountId <accountId>
+
+Скачиваем нужные пакеты:
+  
+sudo apt install curl jq
+  
+Проверяем версию:
+  
+curl -s http://127.0.0.1:3030/status | jq .version
+
+Проверяем делегаторов и команду стейкеров:
+  
+near view <your pool>.factory.shardnet.near get_accounts '{"from_index": 0, "limit": 10}' --accountId <accountId>.shardnet.near
+  
+Проверяем причину кика валидатора:
+  
+curl -s -d '{"jsonrpc": "2.0", "method": "validators", "id": "dontcare", "params": [null]}' -H 'Content-Type: application/json' 127.0.0.1:3030 | jq -c '.result.prev_epoch_kickout[] | select(.account_id | contains ("<POOL_ID>"))' | jq .reason
+
+Проверяем созданные или ожидаемые блоки:
+  
+curl -s -d '{"jsonrpc": "2.0", "method": "validators", "id": "dontcare", "params": [null]}' -H 'Content-Type: application/json' 127.0.0.1:3030 | jq -c '.result.current_validators[] | select(.account_id | contains ("POOL_ID"))'
 
 Задания
 ========================
