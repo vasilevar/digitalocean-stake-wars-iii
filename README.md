@@ -81,70 +81,70 @@ sudo apt update && sudo apt upgrade -y
 
 Устанавливаем Building env
 
-sudo apt install clang build-essential make
+>sudo apt install clang build-essential make
 
 Устанавливаем Rust и Cargo
 
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+>curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 В меню выбираем цифру 1
 
 Прописываем
 
-source $HOME/.cargo/env
+>source $HOME/.cargo/env
 
 Скачиваем nearcore
 
-git clone https://github.com/near/nearcore
-
-cd nearcore
-
-git fetch
+>git clone https://github.com/near/nearcore
+>
+>cd nearcore
+>
+>git fetch
 
 Проверяем commit. Commit - https://github.com/near/stakewars-iii/blob/main/commit.md
 
-git checkout <commit>
+>git checkout <commit>
 
 Компилируем nearcore
   
-cargo build -p neard --release --features shardnet
+>cargo build -p neard --release --features shardnet
   
 Папка - target/release/neard
 
 Инициализируем рабочую папку
-./target/release/neard --home ~/.near init --chain-id shardnet --download-genesis
+>./target/release/neard --home ~/.near init --chain-id shardnet --download-genesis
 
-Прописываем
+Заменяем config.json на нужный
 
-rm ~/.near/config.json
-  
-wget -O ~/.near/config.json https://s3-us-west-1.amazonaws.com/build.nearprotocol.com/nearcore-deploy/shardnet/config.json
+>rm ~/.near/config.json
+>
+>wget -O ~/.near/config.json https://s3-us-west-1.amazonaws.com/build.nearprotocol.com/nearcore-deploy/shardnet/config.json
  
 Запускаем ноду
 
-cd ~/nearcore
-  
-./target/release/neard --home ~/.near run
+>cd ~/nearcore
+>
+>./target/release/neard --home ~/.near run
 
 Логинимся
  
-near login
+>near login
   
 Копируем ссылку в браузер и там логинимся в свой аккаунт, после этого вписываем свой адресс в командую строку
 
 Проверяем validator_key.json
 
-cat ~/.near/validator_key.json
+>cat ~/.near/validator_key.json
   
 Если validator_key.json отсутсвует, то создаем его
 
-near generate-key <pool_id>
+>near generate-key <pool_id>
 
 pool_id - имя вашего пула, <pool_id>.factory.shardnet.near
 
 Копируем ключ в nearcore
   
-cp ~/.near-credentials/shardnet/YOUR_WALLET.json ~/.near/validator_key.json
+>cp ~/.near-credentials/shardnet/YOUR_WALLET.json ~/.near/validator_key.json
   
 Заменяем account_id на <pool_id>.factory.shardnet.near
   
@@ -152,47 +152,47 @@ cp ~/.near-credentials/shardnet/YOUR_WALLET.json ~/.near/validator_key.json
 
 Запускаем валидатора
 
-target/release/neard run
+>target/release/neard run
   
-Настраиваем systemd
+Настраиваем neard
 
-sudo vi /etc/systemd/system/neard.service
+>sudo vi /etc/systemd/system/neard.service
 
-[Unit]
-  
-Description=NEARd Daemon Service
-
-[Service]
-  
-Type=simple
-  
-User=<USER>
-  
-#Group=near
-  
-WorkingDirectory=/home/<USER>/.near
-  
-ExecStart=/home/<USER>/nearcore/target/release/neard run
-  
-Restart=on-failure
-  
-RestartSec=30
-  
-KillSignal=SIGINT
-  
-TimeoutStopSec=45
-  
-KillMode=mixed
-
-[Install]
-  
-WantedBy=multi-user.target
-
-Потом прописываем:
-  
-sudo systemctl enable neard
-  
-sudo systemctl start neard
+>[Unit]
+>
+>Description=NEARd Daemon Service
+>
+>[Service]
+>  
+>Type=simple
+> 
+>User=<USER>
+> 
+>#Group=near
+>  
+>WorkingDirectory=/home/<USER>/.near
+> 
+>ExecStart=/home/<USER>/nearcore/target/release/neard run
+>  
+>Restart=on-failure
+>  
+>RestartSec=30
+>  
+>KillSignal=SIGINT
+> 
+>TimeoutStopSec=45
+> 
+>KillMode=mixed
+>
+>[Install]
+> 
+>WantedBy=multi-user.target
+>
+>Потом прописываем:
+>  
+>sudo systemctl enable neard
+>  
+>sudo systemctl start neard
   
 Посмотреть журнал:
   
