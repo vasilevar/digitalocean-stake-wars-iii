@@ -37,7 +37,7 @@
 ========================
 Обновляем все пакеты
 
-sudo apt update && sudo apt upgrade -y
+>sudo apt update && sudo apt upgrade -y
 
 Устанавливаем Node.js и npm
 
