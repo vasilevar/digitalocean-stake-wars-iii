@@ -42,8 +42,8 @@ sudo apt update && sudo apt upgrade -y
 Устанавливаем Node.js и npm
 
 >curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -  
-sudo apt install build-essential nodejs
-PATH="$PATH"
+>sudo apt install build-essential nodejs
+>PATH="$PATH"
 
 Версия Node.js должна быть 18.x.x, а версия npm 8.x.x
 
