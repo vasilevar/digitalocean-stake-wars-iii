@@ -220,6 +220,24 @@ pool id и staking_pool_id - имя вашего пула, которое вы �
   
 >near call <pool_name> update_reward_fee_fraction '{"reward_fee_fraction": {"numerator": 1, "denominator": 100}}' --accountId <account_id> --gas=300000000000000
 
+Общий баланс команды:
+
+>near view <pool_id> get_account_total_balance '{"account_id": "<accountId>"}'
+  
+Застейканный баланс:
+
+>near view <pool_id> get_account_staked_balance '{"account_id": "<accountId>"}'
+  
+Анстейкнутый баланс:
+  
+>near view <pool_id> get_account_unstaked_balance '{"account_id": "<accountId>"}'
+  
+Доступное для вывода:
+
+>near view <pool_id> is_account_unstaked_balance_available '{"account_id": "<accountId>"}'
+ 
+Количество везде указывается в yoctoNEAR
+
 Застейкать:
   
 >near call <staking_pool_id> deposit_and_stake --amount <amount> --accountId <accountId> --gas=300000000000000
