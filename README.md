@@ -49,35 +49,35 @@ sudo apt update && sudo apt upgrade -y
 
 Версия Node.js должна быть 18.x.x, а версия npm 8.x.x
 
-node - v
-
-npm -v
+>node - v
+>
+>npm -v
 
 Устанавливаем NEAR-CLI
 
-sudo npm install -g near-cli
+>sudo npm install -g near-cli
 
 Устанавливаем shardnet, как сеть где будет работать NEAR-CLI
 
-export NEAR_ENV=shardnet
+>export NEAR_ENV=shardnet
 
 Устанавливаем нужные пакеты
 
-sudo apt install -y git binutils-dev libcurl4-openssl-dev zlib1g-dev libdw-dev libiberty-dev cmake gcc g++ python3 docker.io protobuf-compiler libssl-dev pkg-config clang llvm cargo
+>sudo apt install -y git binutils-dev libcurl4-openssl-dev zlib1g-dev libdw-dev libiberty-dev cmake gcc g++ python3 docker.io protobuf-compiler libssl-dev pkg-config clang llvm cargo
 
 Устанавливаем pip
 
-sudo apt install python3-pip
+>sudo apt install python3-pip
 
 Если есть проблемы с установкой docker то пропишите:
 
-apt-get install containerd=1.3.3-0ubuntu2
+>apt-get install containerd=1.3.3-0ubuntu2
 
 Устанавливаем конфигурацию
 
-USER_BASE_BIN=$(python3 -m site --user-base)/bin
-
-export PATH="$USER_BASE_BIN:$PATH"
+>USER_BASE_BIN=$(python3 -m site --user-base)/bin
+>
+>export PATH="$USER_BASE_BIN:$PATH"
 
 Устанавливаем Building env
 
