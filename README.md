@@ -166,13 +166,13 @@ pool_id - имя вашего пула, <pool_id>.factory.shardnet.near
 >  
 >Type=simple
 > 
->User=<USER>
+>User=USER
 > 
 >#Group=near
 >  
->WorkingDirectory=/home/<USER>/.near
+>WorkingDirectory=/USER/.near
 > 
->ExecStart=/home/<USER>/nearcore/target/release/neard run
+>ExecStart=/USER/nearcore/target/release/neard run
 >  
 >Restart=on-failure
 >  
@@ -188,75 +188,81 @@ pool_id - имя вашего пула, <pool_id>.factory.shardnet.near
 > 
 >WantedBy=multi-user.target
 >
->Потом прописываем:
->  
+  
+Вместо USER пишем имя нашего пользователя 
+  
+Потом включаем neard:
+
 >sudo systemctl enable neard
 >  
 >sudo systemctl start neard
   
+
 Посмотреть журнал:
   
-journalctl -n 100 -f -u neard
+>journalctl -n 100 -f -u neard
   
-Устанавливаем красивый шрифт:
+Устанавливаем цвет для журнала:
   
-sudo apt install ccze
+>sudo apt install ccze
   
 Просмотр журнала с цветом:
   
-journalctl -n 100 -f -u neard | ccze -A
+>journalctl -n 100 -f -u neard | ccze -A
   
 Разворачиваем контракт стейкинг пула:
   
-near call factory.shardnet.near create_staking_pool '{"staking_pool_id": "<pool id>", "owner_id": "<accountId>", "stake_public_key": "<public key>", "reward_fee_fraction": {"numerator": 5, "denominator": 100}, "code_hash":"DD428g9eqLL8fWUxv8QSpVFzyHi1Qd16P8ephYCTmMSZ"}' --accountId="<accountId>" --amount=30 --gas=300000000000000
+>near call factory.shardnet.near create_staking_pool '{"staking_pool_id": "<pool id>", "owner_id": "<accountId>", "stake_public_key": "<public key>", "reward_fee_fraction": {"numerator": 5, "denominator": 100}, "code_hash":"DD428g9eqLL8fWUxv8QSpVFzyHi1Qd16P8ephYCTmMSZ"}' --accountId="<accountId>" --amount=30 --gas=300000000000000
 
+pool id и staking_pool_id - имя вашего пула, которое вы указали в validator_key.json, accountId - имя вашего обычного аккаунта, public key - публичный ключ из validator_key.json
+ 
 Обновить настройки стейкинг пула:
   
-near call <pool_name> update_reward_fee_fraction '{"reward_fee_fraction": {"numerator": 1, "denominator": 100}}' --accountId <account_id> --gas=300000000000000
+>near call <pool_name> update_reward_fee_fraction '{"reward_fee_fraction": {"numerator": 1, "denominator": 100}}' --accountId <account_id> --gas=300000000000000
 
 Застейкать:
   
-near call <staking_pool_id> deposit_and_stake --amount <amount> --accountId <accountId> --gas=300000000000000
+>near call <staking_pool_id> deposit_and_stake --amount <amount> --accountId <accountId> --gas=300000000000000
 
 Разстейкать:
 
-near call <staking_pool_id> unstake '{"amount": "<amount yoctoNEAR>"}' --accountId <accountId> --gas=300000000000000
+>near call <staking_pool_id> unstake '{"amount": "<amount yoctoNEAR>"}' --accountId <accountId> --gas=300000000000000
 
 Разстейкать все:
 
-near call <staking_pool_id> unstake_all --accountId <accountId> --gas=300000000000000
+>near call <staking_pool_id> unstake_all --accountId <accountId> --gas=300000000000000
 
-Анстейк занимает 2-3 эпохи (24-36ч)
+Анстейк занимает 2-3 эпохи
   
 Пинг:
   
-near call <staking_pool_id> ping '{}' --accountId <accountId> --gas=300000000000000
+>near call <staking_pool_id> ping '{}' --accountId <accountId> --gas=300000000000000
   
 Пауза/возобновление стейкинга:
   
-near call <staking_pool_id> pause_staking '{}' --accountId <accountId>
+>near call <staking_pool_id> pause_staking '{}' --accountId <accountId>
   
-near call <staking_pool_id> resume_staking '{}' --accountId <accountId>
+>near call <staking_pool_id> resume_staking '{}' --accountId <accountId>
 
 Скачиваем нужные пакеты:
   
-sudo apt install curl jq
+>sudo apt install curl jq
   
 Проверяем версию:
   
-curl -s http://127.0.0.1:3030/status | jq .version
+>curl -s http://127.0.0.1:3030/status | jq .version
 
 Проверяем делегаторов и команду стейкеров:
   
-near view <your pool>.factory.shardnet.near get_accounts '{"from_index": 0, "limit": 10}' --accountId <accountId>.shardnet.near
+>near view <your pool>.factory.shardnet.near get_accounts '{"from_index": 0, "limit": 10}' --accountId <accountId>.shardnet.near
   
 Проверяем причину кика валидатора:
   
-curl -s -d '{"jsonrpc": "2.0", "method": "validators", "id": "dontcare", "params": [null]}' -H 'Content-Type: application/json' 127.0.0.1:3030 | jq -c '.result.prev_epoch_kickout[] | select(.account_id | contains ("<POOL_ID>"))' | jq .reason
+>curl -s -d '{"jsonrpc": "2.0", "method": "validators", "id": "dontcare", "params": [null]}' -H 'Content-Type: application/json' 127.0.0.1:3030 | jq -c '.result.prev_epoch_kickout[] | select(.account_id | contains ("<POOL_ID>"))' | jq .reason
 
 Проверяем созданные или ожидаемые блоки:
   
-curl -s -d '{"jsonrpc": "2.0", "method": "validators", "id": "dontcare", "params": [null]}' -H 'Content-Type: application/json' 127.0.0.1:3030 | jq -c '.result.current_validators[] | select(.account_id | contains ("POOL_ID"))'
+>curl -s -d '{"jsonrpc": "2.0", "method": "validators", "id": "dontcare", "params": [null]}' -H 'Content-Type: application/json' 127.0.0.1:3030 | jq -c '.result.current_validators[] | select(.account_id | contains ("POOL_ID"))'
 
 Задания
 ========================
