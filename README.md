@@ -144,9 +144,9 @@ pool_id - имя вашего пула, <pool_id>.factory.shardnet.near
 
 Копируем ключ в nearcore
   
->cp ~/.near-credentials/shardnet/YOUR_WALLET.json ~/.near/validator_key.json
+>cp ~/.near-credentials/shardnet/ВАШ_КОШЕЛЕК.json ~/.near/validator_key.json
   
-Заменяем account_id на <pool_id>.factory.shardnet.near
+Заменяем в ключе account_id на <pool_id>.factory.shardnet.near
   
 А private_key на secret_key
 
